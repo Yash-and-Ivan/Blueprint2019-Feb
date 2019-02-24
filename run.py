@@ -1,8 +1,10 @@
 from eye_recognition.eye_recognizer import EyeRecognizer
 import cv2
 
+CAMERA = 0
+
 if __name__ == '__main__':
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(CAMERA)
     recoginzer = EyeRecognizer(cap)
 
     while True:
