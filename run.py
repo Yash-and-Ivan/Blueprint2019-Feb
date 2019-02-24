@@ -3,7 +3,7 @@ import cv2
 import pyautogui
 
 
-CAMERA = 1
+CAMERA = 0
 
 if __name__ == '__main__':
     print("Starting...")

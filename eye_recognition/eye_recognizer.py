@@ -5,9 +5,10 @@ import imutils
 import numpy as np
 import cv2
 
+RANGE_X = 50
+RANGE_Y = 20
 
 class EyeRecognizer():
-
     def get_new_info(self):
 
         back = {}
@@ -84,6 +85,7 @@ class EyeRecognizer():
 
         pupil = sorted(circles[0], key=lambda x: self._average_brightness(eye_gray, x))[0]
 
+        cv2.rectangle(eye, (125 - RANGE_X//2, 125 - RANGE_Y//2), (125 + RANGE_X//2, 125 + RANGE_Y//2), (255, 255, 0), 1)
         cv2.line(eye, (0, pupil[1]), (250, pupil[1]), (0, 255, 0), 1)
         cv2.line(eye, (pupil[0], 0), (pupil[0], 250), (0, 255, 0), 1)
         cv2.circle(eye, (pupil[0], pupil[1]), pupil[2], (255, 0, 0), 3)
