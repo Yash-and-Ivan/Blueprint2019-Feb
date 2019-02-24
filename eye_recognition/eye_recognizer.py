@@ -84,12 +84,15 @@ class EyeRecognizer():
 
         pupil = sorted(circles[0], key=lambda x: self._average_brightness(eye_gray, x))[0]
 
-        eye = cv2.circle(eye, (pupil[0], pupil[1]), pupil[2], (255, 0, 0), 3)
+        cv2.line(eye, (0, pupil[1]), (250, pupil[1]), (0, 255, 0), 1)
+        cv2.line(eye, (pupil[0], 0), (pupil[0], 250), (0, 255, 0), 1)
+        cv2.circle(eye, (pupil[0], pupil[1]), pupil[2], (255, 0, 0), 3)
+        cv2.circle(eye, (pupil[0], pupil[1]), 3, (0, 0, 255), -1)
 
         back['status'] = True
         back['position'] = (125 - pupil[0], 125 - pupil[1])
         back['radius'] = pupil[2]
-        back['num_circles'] = len(circles)
+        back['num_circles'] = len(circles[0])
 
         cv2.imshow(name, eye)
 
