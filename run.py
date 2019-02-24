@@ -2,8 +2,7 @@ from eye_recognition.eye_recognizer import EyeRecognizer
 import cv2
 import pyautogui
 
-
-CAMERA = 0
+CAMERA = 1
 
 if __name__ == '__main__':
     print("Starting...")
@@ -28,7 +27,9 @@ Y88b 888 888       Y88b 888 Y8b.
                     
 
             """)
-
+    size = pyautogui.size()
+    pastx = [size[0] // 2] * 15
+    pasty = [size[1] // 2] * 15
     while True:
 
         info = recoginzer.get_new_info()  # simon work with this :)
@@ -50,9 +51,13 @@ Y88b 888 888       Y88b 888 Y8b.
         rx = info["right_eye"]["position"][0]
         ry = info["right_eye"]["position"][1]
 
-        size = pyautogui.size()
-        pyautogui.moveTo(size[0] * ((lx + rx) // 2 + 100) // 200, size[1] * ((ly + ry) // 2 + 100) // 200)
+        # moving average of 15 frames
+        pastx.insert(0, size[0] * ((lx + rx) // 2 + 50) // 100)
+        del pastx[-1]
+        pasty.insert(0, size[1] * ((ly + ry) // 2 + 10) // 20)
+        del pasty[-1]
 
+        pyautogui.moveTo(sum(pastx) // len(pastx), sum(pasty) // len(pasty), duration=1)
 
         # escape to exit
         if cv2.waitKey(int(1000 / 30)) == 27:
