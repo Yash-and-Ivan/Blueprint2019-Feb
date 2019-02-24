@@ -5,8 +5,8 @@ import imutils
 import numpy as np
 import cv2
 
-RANGE_X = 50
-RANGE_Y = 20
+RANGE_X = 200
+RANGE_Y = 50
 
 class EyeRecognizer():
     def get_new_info(self):

@@ -1,4 +1,4 @@
-from eye_recognition.eye_recognizer import EyeRecognizer
+from eye_recognition.eye_recognizer import EyeRecognizer, RANGE_X, RANGE_Y
 import cv2
 import pyautogui
 
@@ -55,9 +55,9 @@ Y88b 888 888       Y88b 888 Y8b.
         ry = info["right_eye"]["position"][1]
 
         # moving average of 15 frames
-        pastx.insert(0, size[0] * ((lx + rx) // 2 + 50) // 100)
+        pastx.insert(0, size[0] * ((lx + rx) // 2 + RANGE_X // 2) // RANGE_X)
         del pastx[-1]
-        pasty.insert(0, size[1] * ((ly + ry) // 2 + 10) // 20)
+        pasty.insert(0, size[1] * ((ly + ry) // 2 + RANGE_Y // 2) // RANGE_Y)
         del pasty[-1]
 
         pyautogui.moveTo(sum(pastx) // len(pastx), sum(pasty) // len(pasty))
