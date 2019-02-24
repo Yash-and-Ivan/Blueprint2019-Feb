@@ -4,6 +4,7 @@ from imutils import face_utils
 import imutils
 import numpy as np
 import cv2
+import random as r
 
 RANGE_X = 50
 RANGE_Y = 30
@@ -32,6 +33,19 @@ class EyeRecognizer():
         face = imutils.resize(frame[face_loc[0]:face_loc[2], face_loc[3]:face_loc[1]],
                               width=500,
                               inter=cv2.INTER_CUBIC)  # resize frame
+
+        if r.random() > 0.95:
+            # check if face is user
+            encoding = face_recognition.face_encodings(face)
+            if len(encoding) == 0:
+                back['status'] = False
+                return back
+
+            encoding = encoding[0]
+
+            if not face_recognition.compare_faces([encoding], self.user)[0]:
+                back['status'] = False
+                return back
 
         face_w, face_h, _ = face.shape
 
@@ -108,9 +122,10 @@ class EyeRecognizer():
         cv2.circle(zero_img2, (circle[0], circle[1]), int(circle[2] + 10), (255, 255, 255), 5)
         return (cv2.mean(img, mask=zero_img1))[0] - (cv2.mean(img, mask=zero_img2))[0]
 
-    def __init__(self, cap: cv2.VideoCapture):
+    def __init__(self, cap: cv2.VideoCapture, enc):
         self._cap = cap
         self._face_predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+        self.user = enc
 
     def __del__(self):
         pass
