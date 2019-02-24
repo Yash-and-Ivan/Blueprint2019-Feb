@@ -30,8 +30,9 @@ Y88b 888 888       Y88b 888 Y8b.
     calibrated = False
     cal_state = 4
     cal_count = cal_frames = 1 * 30  # seconds * frames / second
-    cal_pos = [[]]
-    edges = [0] * 4  # [top right, bottom right, bottom left, top left]
+    cal_posx = [[]]
+    cal_posy = [[]]
+    edges = [(0, 0)] * 4  # [top right, bottom right, bottom left, top left]
 
     size = pyautogui.size()
     pastx = [size[0] // 2] * 15
@@ -64,24 +65,29 @@ Y88b 888 888       Y88b 888 Y8b.
         if not calibrated:
             print(f"Calibrating state {cal_state}")
             if cal_state != 0:
-                cal_pos[-1].append(((lx + rx) // 2, (ly + ry) // 2))
+                cal_posx[-1].append((lx + rx) // 2)
+                cal_posy[-1].append((ly + ry) // 2)
                 if cal_count == 0:
                     cal_state -= 1
                     cal_count = cal_frames
+                    cal_posx.append([])
+                    cal_posy.append([])
                 else:
                     cal_count -= 1
                 continue
             else:
+                print(len(cal_posx), len(cal_posy), len(edges))
                 calibrated = True
                 for i in range(4):
-                    edges[i] = sum(cal_pos[i]) // len(cal_pos[i])
-
-        print("Calibrated")
+                    edges[i] = sum(cal_posx[i]) // len(cal_posx[i]), sum(cal_posy[i]) // len(cal_posy[i])
+                RANGE_X[0] = ((edges[0][0] + edges[1][0]) // 2) - ((edges[2][0] + edges[3][0]) // 2)
+                RANGE_Y[0] = ((edges[0][1] + edges[3][1]) // 2) - ((edges[1][1] + edges[2][1]) // 2)
+                print("Calibrated")
 
         # moving average of 15 frames
-        pastx.insert(0, size[0] * ((lx + rx) // 2 + RANGE_X // 2) // RANGE_X)
+        pastx.insert(0, size[0] * ((lx + rx) // 2 + RANGE_X[0] // 2) // RANGE_X[0])
         del pastx[-1]
-        pasty.insert(0, size[1] * ((ly + ry) // 2 + RANGE_Y // 2) // RANGE_Y)
+        pasty.insert(0, size[1] * ((ly + ry) // 2 + RANGE_Y[0] // 2) // RANGE_Y[0])
         del pasty[-1]
 
         pyautogui.moveTo(sum(pastx) // len(pastx), sum(pasty) // len(pasty))
