@@ -7,5 +7,10 @@ imutils==0.5.2
 numpy==1.16.1
 opencv-python==4.0.0.21
 Pillow==5.4.1
-pywin32==224
+PyAutoGUI==0.9.41
+PyGetWindow==0.0.4
+PyMsgBox==1.0.6
+PyRect==0.1.4
+PyScreeze==0.1.19
+PyTweening==1.0.3
 scipy==1.2.1
