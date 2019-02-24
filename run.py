@@ -22,10 +22,6 @@ Y88b 888 888       Y88b 888 Y8b.
                         888               
                    Y8b d88P               
                     "Y88P" 
-                    
-                    
-                    
-
             """)
     calibrated = False
     cal_state = 4
@@ -37,6 +33,7 @@ Y88b 888 888       Y88b 888 Y8b.
     size = pyautogui.size()
     pastx = [size[0] // 2] * 15
     pasty = [size[1] // 2] * 15
+    print("Calibrating state 4")
     while True:
         # escape to exit
         if cv2.waitKey(int(1000 / 30)) == 27:
@@ -63,26 +60,27 @@ Y88b 888 888       Y88b 888 Y8b.
             ly = ry = info["right_eye"]["position"][1]
 
         if not calibrated:
-            print(f"Calibrating state {cal_state}")
             if cal_state != 0:
                 cal_posx[-1].append((lx + rx) // 2)
                 cal_posy[-1].append((ly + ry) // 2)
                 if cal_count == 0:
                     cal_state -= 1
+                    print(f"Calibrating state {cal_state}")
                     cal_count = cal_frames
+                    print(sum(cal_posx[-1]) // len(cal_posx[-1]), sum(cal_posy[-1]) // len(cal_posy[-1]))
                     cal_posx.append([])
                     cal_posy.append([])
                 else:
                     cal_count -= 1
                 continue
             else:
-                print(len(cal_posx), len(cal_posy), len(edges))
                 calibrated = True
                 for i in range(4):
                     edges[i] = sum(cal_posx[i]) // len(cal_posx[i]), sum(cal_posy[i]) // len(cal_posy[i])
-                RANGE_X[0] = ((edges[0][0] + edges[1][0]) // 2) - ((edges[2][0] + edges[3][0]) // 2)
-                RANGE_Y[0] = ((edges[0][1] + edges[3][1]) // 2) - ((edges[1][1] + edges[2][1]) // 2)
+                RANGE_X[0] = abs(((edges[2][0] + edges[3][0]) // 2) - ((edges[0][0] + edges[1][0]) // 2))
+                RANGE_Y[0] = abs(((edges[1][1] + edges[2][1]) // 2) - ((edges[0][1] + edges[3][1]) // 2))
                 print("Calibrated")
+                print(RANGE_X, RANGE_Y)
 
         # moving average of 15 frames
         pastx.insert(0, size[0] * ((lx + rx) // 2 + RANGE_X[0] // 2) // RANGE_X[0])
