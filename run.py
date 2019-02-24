@@ -2,7 +2,7 @@ from eye_recognition.eye_recognizer import EyeRecognizer, RANGE_X, RANGE_Y
 import cv2
 import pyautogui
 
-CAMERA = 0
+CAMERA = 1
 
 if __name__ == '__main__':
     print("Starting...")
@@ -27,6 +27,12 @@ Y88b 888 888       Y88b 888 Y8b.
                     
 
             """)
+    calibrated = False
+    cal_state = 4
+    cal_count = cal_frames = 1 * 30  # seconds * frames / second
+    cal_pos = [[]]
+    edges = [0] * 4  # [top right, bottom right, bottom left, top left]
+
     size = pyautogui.size()
     pastx = [size[0] // 2] * 15
     pasty = [size[1] // 2] * 15
@@ -36,7 +42,6 @@ Y88b 888 888       Y88b 888 Y8b.
             break
 
         info = recoginzer.get_new_info()  # simon work with this :)
-
         # eyes not detected
         if not info["status"]:
             continue
@@ -55,6 +60,23 @@ Y88b 888 888       Y88b 888 Y8b.
         else:
             lx = rx = info["right_eye"]["position"][0]
             ly = ry = info["right_eye"]["position"][1]
+
+        if not calibrated:
+            print(f"Calibrating state {cal_state}")
+            if cal_state != 0:
+                cal_pos[-1].append(((lx + rx) // 2, (ly + ry) // 2))
+                if cal_count == 0:
+                    cal_state -= 1
+                    cal_count = cal_frames
+                else:
+                    cal_count -= 1
+                continue
+            else:
+                calibrated = True
+                for i in range(4):
+                    edges[i] = sum(cal_pos[i]) // len(cal_pos[i])
+
+        print("Calibrated")
 
         # moving average of 15 frames
         pastx.insert(0, size[0] * ((lx + rx) // 2 + RANGE_X // 2) // RANGE_X)
