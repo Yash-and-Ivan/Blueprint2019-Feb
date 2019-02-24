@@ -75,7 +75,7 @@ class EyeRecognizer():
         eye_gray = cv2.morphologyEx(eye_gray, cv2.MORPH_CLOSE, (20, 20))
 
         circles = cv2.HoughCircles(eye_gray, cv2.HOUGH_GRADIENT, 1, 25,
-                                   param1=30, param2=30, minRadius=0, maxRadius=125)
+                                   param1=30, param2=30, minRadius=10, maxRadius=75)
 
         if circles is None or len(circles.shape) != 3:
             cv2.imshow(name, eye)
@@ -96,9 +96,11 @@ class EyeRecognizer():
         return back
 
     def _average_brightness(self, img, circle):
-        zero_img = np.zeros((img.shape[0], img.shape[1]), np.uint8)
-        cv2.circle(zero_img, (circle[0], circle[1]), circle[2], (255, 255, 255), -1)
-        return (cv2.mean(img, mask=zero_img))[0]
+        zero_img1 = np.zeros((img.shape[0], img.shape[1]), np.uint8)
+        zero_img2 = np.zeros((img.shape[0], img.shape[1]), np.uint8)
+        cv2.circle(zero_img1, (circle[0], circle[1]), circle[2], (255, 255, 255), -1)
+        cv2.circle(zero_img2, (circle[0], circle[1]), int(circle[2] + 10), (255, 255, 255), 5)
+        return (cv2.mean(img, mask=zero_img1))[0] - (cv2.mean(img, mask=zero_img2))[0]
 
     def __init__(self, cap: cv2.VideoCapture):
         self._cap = cap
