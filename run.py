@@ -41,18 +41,20 @@ Y88b 888 888       Y88b 888 Y8b.
         if not info["status"]:
             continue
 
-        # left click
-        if not info["left_eye"]["status"]:
-            continue
-
-        # right click
-        if not info["right_eye"]["status"]:
-            continue
-
-        lx = info["left_eye"]["position"][0]
-        ly = info["left_eye"]["position"][1]
-        rx = info["right_eye"]["position"][0]
-        ry = info["right_eye"]["position"][1]
+        if info["left_eye"]["status"] and info["right_eye"]["status"]:
+            lx = info["left_eye"]["position"][0]
+            ly = info["left_eye"]["position"][1]
+            rx = info["right_eye"]["position"][0]
+            ry = info["right_eye"]["position"][1]
+        elif not info["left_eye"]["status"] and not info["right_eye"]["status"]:
+            lx = rx = size[0] // 2
+            ly = ry = size[1] // 2
+        elif info["left_eye"]["status"]:
+            rx = lx = info["left_eye"]["position"][0]
+            ry = ly = info["left_eye"]["position"][1]
+        else:
+            lx = rx = info["right_eye"]["position"][0]
+            ly = ry = info["right_eye"]["position"][1]
 
         # moving average of 15 frames
         pastx.insert(0, size[0] * ((lx + rx) // 2 + RANGE_X // 2) // RANGE_X)
